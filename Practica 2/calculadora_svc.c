@@ -17,37 +17,65 @@
 #endif
 
 static double *
-_sumar_1 (sumar_1_argument *argp, struct svc_req *rqstp)
+_sumar_1 (datos  *argp, struct svc_req *rqstp)
 {
-	return (sumar_1_svc(argp->arg1, argp->arg2, rqstp));
+	return (sumar_1_svc(*argp, rqstp));
 }
 
 static double *
-_restar_1 (restar_1_argument *argp, struct svc_req *rqstp)
+_restar_1 (datos  *argp, struct svc_req *rqstp)
 {
-	return (restar_1_svc(argp->arg1, argp->arg2, rqstp));
+	return (restar_1_svc(*argp, rqstp));
 }
 
 static double *
-_multiplicar_1 (multiplicar_1_argument *argp, struct svc_req *rqstp)
+_multiplicar_1 (datos  *argp, struct svc_req *rqstp)
 {
-	return (multiplicar_1_svc(argp->arg1, argp->arg2, rqstp));
+	return (multiplicar_1_svc(*argp, rqstp));
 }
 
 static double *
-_dividir_1 (dividir_1_argument *argp, struct svc_req *rqstp)
+_dividir_1 (datos  *argp, struct svc_req *rqstp)
 {
-	return (dividir_1_svc(argp->arg1, argp->arg2, rqstp));
+	return (dividir_1_svc(*argp, rqstp));
+}
+
+static double *
+_potencia_1 (datos  *argp, struct svc_req *rqstp)
+{
+	return (potencia_1_svc(*argp, rqstp));
+}
+
+static datos *
+_sumarvector_1 (datos  *argp, struct svc_req *rqstp)
+{
+	return (sumarvector_1_svc(*argp, rqstp));
+}
+
+static datos *
+_restarvector_1 (datos  *argp, struct svc_req *rqstp)
+{
+	return (restarvector_1_svc(*argp, rqstp));
+}
+
+static double *
+_multiplicarvector_1 (datos  *argp, struct svc_req *rqstp)
+{
+	return (multiplicarvector_1_svc(*argp, rqstp));
 }
 
 static void
 calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		sumar_1_argument sumar_1_arg;
-		restar_1_argument restar_1_arg;
-		multiplicar_1_argument multiplicar_1_arg;
-		dividir_1_argument dividir_1_arg;
+		datos sumar_1_arg;
+		datos restar_1_arg;
+		datos multiplicar_1_arg;
+		datos dividir_1_arg;
+		datos potencia_1_arg;
+		datos sumarvector_1_arg;
+		datos restarvector_1_arg;
+		datos multiplicarvector_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -59,27 +87,51 @@ calculadora_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		return;
 
 	case sumar:
-		_xdr_argument = (xdrproc_t) xdr_sumar_1_argument;
+		_xdr_argument = (xdrproc_t) xdr_datos;
 		_xdr_result = (xdrproc_t) xdr_double;
 		local = (char *(*)(char *, struct svc_req *)) _sumar_1;
 		break;
 
 	case restar:
-		_xdr_argument = (xdrproc_t) xdr_restar_1_argument;
+		_xdr_argument = (xdrproc_t) xdr_datos;
 		_xdr_result = (xdrproc_t) xdr_double;
 		local = (char *(*)(char *, struct svc_req *)) _restar_1;
 		break;
 
 	case multiplicar:
-		_xdr_argument = (xdrproc_t) xdr_multiplicar_1_argument;
+		_xdr_argument = (xdrproc_t) xdr_datos;
 		_xdr_result = (xdrproc_t) xdr_double;
 		local = (char *(*)(char *, struct svc_req *)) _multiplicar_1;
 		break;
 
 	case dividir:
-		_xdr_argument = (xdrproc_t) xdr_dividir_1_argument;
+		_xdr_argument = (xdrproc_t) xdr_datos;
 		_xdr_result = (xdrproc_t) xdr_double;
 		local = (char *(*)(char *, struct svc_req *)) _dividir_1;
+		break;
+
+	case potencia:
+		_xdr_argument = (xdrproc_t) xdr_datos;
+		_xdr_result = (xdrproc_t) xdr_double;
+		local = (char *(*)(char *, struct svc_req *)) _potencia_1;
+		break;
+
+	case sumarVector:
+		_xdr_argument = (xdrproc_t) xdr_datos;
+		_xdr_result = (xdrproc_t) xdr_datos;
+		local = (char *(*)(char *, struct svc_req *)) _sumarvector_1;
+		break;
+
+	case restarVector:
+		_xdr_argument = (xdrproc_t) xdr_datos;
+		_xdr_result = (xdrproc_t) xdr_datos;
+		local = (char *(*)(char *, struct svc_req *)) _restarvector_1;
+		break;
+
+	case multiplicarVector:
+		_xdr_argument = (xdrproc_t) xdr_datos;
+		_xdr_result = (xdrproc_t) xdr_double;
+		local = (char *(*)(char *, struct svc_req *)) _multiplicarvector_1;
 		break;
 
 	default:

@@ -10,15 +10,13 @@
 static struct timeval TIMEOUT = { 25, 0 };
 
 double *
-sumar_1(double arg1, double arg2,  CLIENT *clnt)
+sumar_1(datos arg1,  CLIENT *clnt)
 {
-	sumar_1_argument arg;
 	static double clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	arg.arg1 = arg1;
-	arg.arg2 = arg2;
-	if (clnt_call (clnt, sumar, (xdrproc_t) xdr_sumar_1_argument, (caddr_t) &arg,
+	if (clnt_call (clnt, sumar,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
 		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -27,15 +25,13 @@ sumar_1(double arg1, double arg2,  CLIENT *clnt)
 }
 
 double *
-restar_1(double arg1, double arg2,  CLIENT *clnt)
+restar_1(datos arg1,  CLIENT *clnt)
 {
-	restar_1_argument arg;
 	static double clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	arg.arg1 = arg1;
-	arg.arg2 = arg2;
-	if (clnt_call (clnt, restar, (xdrproc_t) xdr_restar_1_argument, (caddr_t) &arg,
+	if (clnt_call (clnt, restar,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
 		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -44,15 +40,13 @@ restar_1(double arg1, double arg2,  CLIENT *clnt)
 }
 
 double *
-multiplicar_1(double arg1, double arg2,  CLIENT *clnt)
+multiplicar_1(datos arg1,  CLIENT *clnt)
 {
-	multiplicar_1_argument arg;
 	static double clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	arg.arg1 = arg1;
-	arg.arg2 = arg2;
-	if (clnt_call (clnt, multiplicar, (xdrproc_t) xdr_multiplicar_1_argument, (caddr_t) &arg,
+	if (clnt_call (clnt, multiplicar,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
 		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -61,15 +55,73 @@ multiplicar_1(double arg1, double arg2,  CLIENT *clnt)
 }
 
 double *
-dividir_1(double arg1, double arg2,  CLIENT *clnt)
+dividir_1(datos arg1,  CLIENT *clnt)
 {
-	dividir_1_argument arg;
 	static double clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	arg.arg1 = arg1;
-	arg.arg2 = arg2;
-	if (clnt_call (clnt, dividir, (xdrproc_t) xdr_dividir_1_argument, (caddr_t) &arg,
+	if (clnt_call (clnt, dividir,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
+		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+double *
+potencia_1(datos arg1,  CLIENT *clnt)
+{
+	static double clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, potencia,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
+		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+datos *
+sumarvector_1(datos arg1,  CLIENT *clnt)
+{
+	static datos clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, sumarVector,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
+		(xdrproc_t) xdr_datos, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+datos *
+restarvector_1(datos arg1,  CLIENT *clnt)
+{
+	static datos clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, restarVector,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
+		(xdrproc_t) xdr_datos, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+double *
+multiplicarvector_1(datos arg1,  CLIENT *clnt)
+{
+	static double clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, multiplicarVector,
+		(xdrproc_t) xdr_datos, (caddr_t) &arg1,
 		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
