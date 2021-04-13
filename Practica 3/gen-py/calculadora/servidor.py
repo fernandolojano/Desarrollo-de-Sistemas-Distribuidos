@@ -1,7 +1,8 @@
 import glob
 import sys
 
-from calculadora import Calculadora
+import Calculadora
+from ttypes import InvalidOperation, Operator
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -27,6 +28,24 @@ class CalculadoraHandler:
     def resta(self, n1, n2):
         print("restando " + str(n1) + " con " + str(n2))
         return n1 - n2
+
+    def calcOperation(self, operators):
+        if operators.op == Operator.ADD:
+            val = operators.operator1 + operators.operator2
+        elif operators.op == Operator.SUBSTRACT:
+            val = operators.operator1 - operators.operator2
+        elif operators.op == Operator.MULTIPLY:
+            val = operators.operator1 * operators.operator2
+        elif operators.op == Operator.DIVIDE:
+            if operators.operator2==0:
+                raise InvalidOperation(operators.op, "No se puede dividir entre 0")
+            val = operators.operator1 / operators.operator2
+        else:
+            raise InvalidOperation(operators.op, "Operacion invalida")
+
+        return val
+
+
 
 
 if __name__ == "__main__":
