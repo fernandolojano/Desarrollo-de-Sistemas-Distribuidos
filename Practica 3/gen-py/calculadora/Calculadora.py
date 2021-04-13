@@ -22,24 +22,6 @@ class Iface(object):
     def ping(self):
         pass
 
-    def suma(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-
-        """
-        pass
-
-    def resta(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-
-        """
-        pass
-
     def calcOperation(self, opt):
         """
         Parameters:
@@ -79,74 +61,6 @@ class Client(Iface):
         result.read(iprot)
         iprot.readMessageEnd()
         return
-
-    def suma(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-
-        """
-        self.send_suma(num1, num2)
-        return self.recv_suma()
-
-    def send_suma(self, num1, num2):
-        self._oprot.writeMessageBegin('suma', TMessageType.CALL, self._seqid)
-        args = suma_args()
-        args.num1 = num1
-        args.num2 = num2
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
-
-    def recv_suma(self):
-        iprot = self._iprot
-        (fname, mtype, rseqid) = iprot.readMessageBegin()
-        if mtype == TMessageType.EXCEPTION:
-            x = TApplicationException()
-            x.read(iprot)
-            iprot.readMessageEnd()
-            raise x
-        result = suma_result()
-        result.read(iprot)
-        iprot.readMessageEnd()
-        if result.success is not None:
-            return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "suma failed: unknown result")
-
-    def resta(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-
-        """
-        self.send_resta(num1, num2)
-        return self.recv_resta()
-
-    def send_resta(self, num1, num2):
-        self._oprot.writeMessageBegin('resta', TMessageType.CALL, self._seqid)
-        args = resta_args()
-        args.num1 = num1
-        args.num2 = num2
-        args.write(self._oprot)
-        self._oprot.writeMessageEnd()
-        self._oprot.trans.flush()
-
-    def recv_resta(self):
-        iprot = self._iprot
-        (fname, mtype, rseqid) = iprot.readMessageBegin()
-        if mtype == TMessageType.EXCEPTION:
-            x = TApplicationException()
-            x.read(iprot)
-            iprot.readMessageEnd()
-            raise x
-        result = resta_result()
-        result.read(iprot)
-        iprot.readMessageEnd()
-        if result.success is not None:
-            return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "resta failed: unknown result")
 
     def calcOperation(self, opt):
         """
@@ -188,8 +102,6 @@ class Processor(Iface, TProcessor):
         self._handler = handler
         self._processMap = {}
         self._processMap["ping"] = Processor.process_ping
-        self._processMap["suma"] = Processor.process_suma
-        self._processMap["resta"] = Processor.process_resta
         self._processMap["calcOperation"] = Processor.process_calcOperation
         self._on_message_begin = None
 
@@ -232,52 +144,6 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("ping", msg_type, seqid)
-        result.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
-
-    def process_suma(self, seqid, iprot, oprot):
-        args = suma_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        result = suma_result()
-        try:
-            result.success = self._handler.suma(args.num1, args.num2)
-            msg_type = TMessageType.REPLY
-        except TTransport.TTransportException:
-            raise
-        except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = ex
-        except Exception:
-            logging.exception('Unexpected exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("suma", msg_type, seqid)
-        result.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
-
-    def process_resta(self, seqid, iprot, oprot):
-        args = resta_args()
-        args.read(iprot)
-        iprot.readMessageEnd()
-        result = resta_result()
-        try:
-            result.success = self._handler.resta(args.num1, args.num2)
-            msg_type = TMessageType.REPLY
-        except TTransport.TTransportException:
-            raise
-        except TApplicationException as ex:
-            logging.exception('TApplication exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = ex
-        except Exception:
-            logging.exception('Unexpected exception in handler')
-            msg_type = TMessageType.EXCEPTION
-            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("resta", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -397,276 +263,6 @@ ping_result.thrift_spec = (
 )
 
 
-class suma_args(object):
-    """
-    Attributes:
-     - num1
-     - num2
-
-    """
-
-
-    def __init__(self, num1=None, num2=None,):
-        self.num1 = num1
-        self.num2 = num2
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.I32:
-                    self.num1 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.I32:
-                    self.num2 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('suma_args')
-        if self.num1 is not None:
-            oprot.writeFieldBegin('num1', TType.I32, 1)
-            oprot.writeI32(self.num1)
-            oprot.writeFieldEnd()
-        if self.num2 is not None:
-            oprot.writeFieldBegin('num2', TType.I32, 2)
-            oprot.writeI32(self.num2)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(suma_args)
-suma_args.thrift_spec = (
-    None,  # 0
-    (1, TType.I32, 'num1', None, None, ),  # 1
-    (2, TType.I32, 'num2', None, None, ),  # 2
-)
-
-
-class suma_result(object):
-    """
-    Attributes:
-     - success
-
-    """
-
-
-    def __init__(self, success=None,):
-        self.success = success
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 0:
-                if ftype == TType.I32:
-                    self.success = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('suma_result')
-        if self.success is not None:
-            oprot.writeFieldBegin('success', TType.I32, 0)
-            oprot.writeI32(self.success)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(suma_result)
-suma_result.thrift_spec = (
-    (0, TType.I32, 'success', None, None, ),  # 0
-)
-
-
-class resta_args(object):
-    """
-    Attributes:
-     - num1
-     - num2
-
-    """
-
-
-    def __init__(self, num1=None, num2=None,):
-        self.num1 = num1
-        self.num2 = num2
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.I32:
-                    self.num1 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.I32:
-                    self.num2 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('resta_args')
-        if self.num1 is not None:
-            oprot.writeFieldBegin('num1', TType.I32, 1)
-            oprot.writeI32(self.num1)
-            oprot.writeFieldEnd()
-        if self.num2 is not None:
-            oprot.writeFieldBegin('num2', TType.I32, 2)
-            oprot.writeI32(self.num2)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(resta_args)
-resta_args.thrift_spec = (
-    None,  # 0
-    (1, TType.I32, 'num1', None, None, ),  # 1
-    (2, TType.I32, 'num2', None, None, ),  # 2
-)
-
-
-class resta_result(object):
-    """
-    Attributes:
-     - success
-
-    """
-
-
-    def __init__(self, success=None,):
-        self.success = success
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 0:
-                if ftype == TType.I32:
-                    self.success = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('resta_result')
-        if self.success is not None:
-            oprot.writeFieldBegin('success', TType.I32, 0)
-            oprot.writeI32(self.success)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(resta_result)
-resta_result.thrift_spec = (
-    (0, TType.I32, 'success', None, None, ),  # 0
-)
-
-
 class calcOperation_args(object):
     """
     Attributes:
@@ -689,7 +285,7 @@ class calcOperation_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.opt = action()
+                    self.opt = Terms()
                     self.opt.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -726,7 +322,7 @@ class calcOperation_args(object):
 all_structs.append(calcOperation_args)
 calcOperation_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'opt', [action, None], None, ),  # 1
+    (1, TType.STRUCT, 'opt', [Terms, None], None, ),  # 1
 )
 
 
@@ -753,8 +349,9 @@ class calcOperation_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.DOUBLE:
-                    self.success = iprot.readDouble()
+                if ftype == TType.STRUCT:
+                    self.success = Solution()
+                    self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 1:
@@ -774,8 +371,8 @@ class calcOperation_result(object):
             return
         oprot.writeStructBegin('calcOperation_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.DOUBLE, 0)
-            oprot.writeDouble(self.success)
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
             oprot.writeFieldEnd()
         if self.error is not None:
             oprot.writeFieldBegin('error', TType.STRUCT, 1)
@@ -799,7 +396,7 @@ class calcOperation_result(object):
         return not (self == other)
 all_structs.append(calcOperation_result)
 calcOperation_result.thrift_spec = (
-    (0, TType.DOUBLE, 'success', None, None, ),  # 0
+    (0, TType.STRUCT, 'success', [Solution, None], None, ),  # 0
     (1, TType.STRUCT, 'error', [InvalidOperation, None], None, ),  # 1
 )
 fix_spec(all_structs)

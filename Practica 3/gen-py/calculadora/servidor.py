@@ -2,7 +2,7 @@ import glob
 import sys
 
 import Calculadora
-from ttypes import InvalidOperation, Operator
+from ttypes import InvalidOperation, Operator, Solution
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -21,30 +21,41 @@ class CalculadoraHandler:
     def ping(self):
         print("me han hecho ping()")
 
-    def suma(self, n1, n2):
-        print("sumando " + str(n1) + " con " + str(n2))
-        return n1 + n2
-
-    def resta(self, n1, n2):
-        print("restando " + str(n1) + " con " + str(n2))
-        return n1 - n2
-
     def calcOperation(self, operators):
+        sol = Solution()
+
+        if operators.operator3==0 and operators.operator4==0:
+            print("Operacion solicitada: " + str(operators.operator1) +" " + str(operators.op) + " " + str(operators.operator2))
+        else:
+            print("Operacion solicitada: " + str(operators.operator1) + "x " + str(operators.operator2) + "y " + str(operators.op) + " " + str(operators.operator3) + "x " + str(operators.operator4) + "y " )
+
+
         if operators.op == Operator.ADD:
-            val = operators.operator1 + operators.operator2
+            sol.firstValue = operators.operator1 + operators.operator2
         elif operators.op == Operator.SUBSTRACT:
-            val = operators.operator1 - operators.operator2
+            sol.firstValue = operators.operator1 - operators.operator2
         elif operators.op == Operator.MULTIPLY:
-            val = operators.operator1 * operators.operator2
+            sol.firstValue = operators.operator1 * operators.operator2
         elif operators.op == Operator.DIVIDE:
             if operators.operator2==0:
                 raise InvalidOperation(operators.op, "No se puede dividir entre 0")
-            val = operators.operator1 / operators.operator2
+            sol.firstValue = operators.operator1 / operators.operator2
+        elif operators.op == Operator.POW:
+            sol.firstValue = operators.operator1 ** operators.operator2
+        elif operators.op == Operator.ADDVECTOR:
+            sol.firstValue = operators.operator1 + operators.operator3
+            sol.secondValue = operators.operator2 + operators.operator4
+        elif operators.op == Operator.SUBSTRACTVECTOR:
+            sol.firstValue = operators.operator1 - operators.operator3
+            sol.secondValue = operators.operator2 - operators.operator4
+        elif operators.op == Operator.MULTIPLYVECTOR:
+            valx = operators.operator1 * operators.operator3
+            valy =  operators.operator2 * operators.operator4
+            sol.firstValue = valx+valy
         else:
             raise InvalidOperation(operators.op, "Operacion invalida")
 
-        return val
-
+        return Solution
 
 
 

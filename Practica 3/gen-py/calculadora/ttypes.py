@@ -24,6 +24,7 @@ class Operator(object):
     ADDVECTOR = 5
     SUBSTRACTVECTOR = 6
     MULTIPLYVECTOR = 7
+    POW = 8
 
     _VALUES_TO_NAMES = {
         1: "ADD",
@@ -33,6 +34,7 @@ class Operator(object):
         5: "ADDVECTOR",
         6: "SUBSTRACTVECTOR",
         7: "MULTIPLYVECTOR",
+        8: "POW",
     }
 
     _NAMES_TO_VALUES = {
@@ -43,10 +45,11 @@ class Operator(object):
         "ADDVECTOR": 5,
         "SUBSTRACTVECTOR": 6,
         "MULTIPLYVECTOR": 7,
+        "POW": 8,
     }
 
 
-class action(object):
+class Terms(object):
     """
     Attributes:
      - operator1
@@ -108,7 +111,7 @@ class action(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('action')
+        oprot.writeStructBegin('Terms')
         if self.operator1 is not None:
             oprot.writeFieldBegin('operator1', TType.DOUBLE, 1)
             oprot.writeDouble(self.operator1)
@@ -128,6 +131,74 @@ class action(object):
         if self.op is not None:
             oprot.writeFieldBegin('op', TType.I32, 5)
             oprot.writeI32(self.op)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class Solution(object):
+    """
+    Attributes:
+     - firstValue
+     - secondValue
+
+    """
+
+
+    def __init__(self, firstValue=float(0), secondValue=float(0),):
+        self.firstValue = firstValue
+        self.secondValue = secondValue
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.DOUBLE:
+                    self.firstValue = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.DOUBLE:
+                    self.secondValue = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('Solution')
+        if self.firstValue is not None:
+            oprot.writeFieldBegin('firstValue', TType.DOUBLE, 1)
+            oprot.writeDouble(self.firstValue)
+            oprot.writeFieldEnd()
+        if self.secondValue is not None:
+            oprot.writeFieldBegin('secondValue', TType.DOUBLE, 2)
+            oprot.writeDouble(self.secondValue)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -216,14 +287,20 @@ class InvalidOperation(TException):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(action)
-action.thrift_spec = (
+all_structs.append(Terms)
+Terms.thrift_spec = (
     None,  # 0
     (1, TType.DOUBLE, 'operator1', None, float(0), ),  # 1
     (2, TType.DOUBLE, 'operator2', None, float(0), ),  # 2
     (3, TType.DOUBLE, 'operator3', None, float(0), ),  # 3
     (4, TType.DOUBLE, 'operator4', None, float(0), ),  # 4
     (5, TType.I32, 'op', None, None, ),  # 5
+)
+all_structs.append(Solution)
+Solution.thrift_spec = (
+    None,  # 0
+    (1, TType.DOUBLE, 'firstValue', None, float(0), ),  # 1
+    (2, TType.DOUBLE, 'secondValue', None, float(0), ),  # 2
 )
 all_structs.append(InvalidOperation)
 InvalidOperation.thrift_spec = (
