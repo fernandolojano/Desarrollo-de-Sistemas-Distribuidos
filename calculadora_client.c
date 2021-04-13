@@ -3,13 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.r98.calculadorarpc;
+package com.r98.calculadorathrift;
 
 /**
  *
  * @author reko
  */
-
 
 
 
@@ -22,36 +21,45 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 
 public class JavaClient {
+
+    private static String operacion = "+";
+    private static double valor1 = 12;
+    private static double valor2 = 5;
+    private static double valor3 = 3;
+    private static double valor4 = 10;
   public static void main(String [] args) {
 
-    double ope1=0;
+    /*double ope1=0;
     double ope2=0;
     double ope3=0;
     double ope4=0;
-    String op="";
-        
+    String op=""*/
+    
+  
+    System.out.println(args.length);
     if(args.length < 3){
         
         System.out.println("Formato de entrada Incorrecto");
         System.exit(0);
     }
     
-    if(args.length == 3){
     
-    ope1 = Double.parseDouble(args[0]);
-    op = args[1];
-    ope2 = Double.parseDouble(args[2]);
-    ope3=0;
-    ope4=0;
+    if(args.length == 3){
+  
+    valor1 = Double.parseDouble(args[0]);
+    operacion = args[1];
+    valor2 = Double.parseDouble(args[2]);
+    valor3=0;
+    valor4=0;
      
     }
     
     if(args.length==5){
-    ope1 = Double.parseDouble(args[0]);
-    op = args[1];
-    ope2 = Double.parseDouble(args[2]);
-    ope3= Double.parseDouble(args[3]);
-    ope4= Double.parseDouble(args[4]);
+    valor1 = Double.parseDouble(args[0]);
+    operacion = args[1];
+    valor2 = Double.parseDouble(args[2]);
+    valor3= Double.parseDouble(args[3]);
+    valor4= Double.parseDouble(args[4]);
     }
     
     
@@ -65,7 +73,7 @@ public class JavaClient {
       TProtocol protocol = new  TBinaryProtocol(transport);
       Calculator.Client client = new Calculator.Client(protocol);
 
-      perform(client, op, ope1, ope2, ope3, ope4);
+      perform(client, operacion, valor1, valor2, valor3, valor4);
 
       transport.close();
     } catch (TException x) {
@@ -76,29 +84,58 @@ public class JavaClient {
   private static void perform(Calculator.Client client, String operacion, double valor1, double valor2, double valor3, double valor4) throws TException
   {
     client.ping();
-    System.out.println("ping()");
+    
 
-    int sum = client.suma(1,1);
-    System.out.println("1+1=" + sum);
+    Terms work = new Terms();
 
-    action work = new action();
     
     
     switch(operacion){
         case "+":
-            work.op = Operator.ADD;
+            if(valor3==0 && valor4==0)
+                work.op = Operator.ADD;
+            
+            else work.op = Operator.ADDVECTOR;
+            
         break;
         
         case "-":
-            work.op = Operator.SUBSTRACT;
+            if(valor3==0 && valor4==0)
+                work.op = Operator.SUBSTRACT;
+            
+            else work.op = Operator.SUBSTRACTVECTOR;
+            
         break;
         
-        case "*":
-            work.op = Operator.MULTIPLY;
+        case "x":
+            if(valor3==0 && valor4==0)
+                work.op = Operator.MULTIPLY;
+            
+            else work.op = Operator.MULTIPLYVECTOR;
         break;
         
         case "/":
-            work.op = Operator.DIVIDE;
+            if(valor3==0 && valor4==0)
+                work.op = Operator.DIVIDE;
+  
+            else {
+                System.out.println("Operacion no permitida");
+                System.exit(0);
+            }
+        break;
+        
+        case "^":
+            if(valor3==0 && valor4==0)
+                work.op = Operator.POW;
+            else {
+                System.out.println("Operacion no permitida");
+                System.exit(0);
+            }
+        break;
+            
+        default:
+            System.out.println("Operacion no permitida");
+            System.exit(0);
         break;
     }
     
@@ -109,7 +146,7 @@ public class JavaClient {
     
 
     try {
-      double diff = client.calcOperation(work);
+      Solution diff = client.calcOperation(work);
       System.out.println(valor1 + operacion + valor2 +"=" + diff);
     } catch (InvalidOperation io) {
       System.out.println("Invalid operation: " + io.why);
