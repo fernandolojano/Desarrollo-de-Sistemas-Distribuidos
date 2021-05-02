@@ -1,0 +1,4 @@
+
+grant codeBase "file:/home/reko/repos/Desarrollo-de-Sistemas-Distribuidos/Practica_4/RMI/src/main/java/Ejemplo_I" {
+	permission java.security.AllPermission;
+};
