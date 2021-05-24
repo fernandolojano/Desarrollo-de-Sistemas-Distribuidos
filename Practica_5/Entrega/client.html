@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cliente</title>
+        <link rel="stylesheet" href="estyle.css">
+    </head>
+
+    <body>
+        <div id="Informacion Sensores y Elementos Inteligentes ">
+            Temperatura:
+            <span id="temperaturaActual"></span><br><br>
+    
+            Luminosidad:
+            <span id="luminosidadActual"></span><br><br>
+
+            Aire Acondicionado:
+            <span id="estadoAire"></span><br><br>
+
+            Persianas:
+            <span id="estadoPersianas"></span><br><br>
+    
+
+        </div>
+
+        <div id="botones">
+            <button onclick="changePersianas();">Abrir/Cerrar Persianas</button>
+            <button onclick="changeAire();">ON/OFF Aire Acondicionado</button>
+        </div>
+
+        
+        <div id="Parametros">
+            <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendTemperatura();">
+                <label for="temperatura">Temperatura:</label>
+                <input type="text" name="temperatura" id="temperatura" placeholder="Escriba la temperatura">
+                <input type="submit" value="Enviar datos de la temperatura">
+            </form>
+            <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendLuminosidad();">
+                <label for="luminosidad">Luminosidad:</label>
+                <input type="text" name="luminosidad" id="luminosidad" placeholder="Escriba la luminosidad">
+                <input type="submit" value="Enviar datos de la luminosidad">
+            </form>
+        </div>
+
+        <div id="TemperaturaNotificacion"></div>
+        <div id="LuminosidadNotificacion"></div>
+    </body>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var serviceURL = document.URL;
+        var socket = io.connect(serviceURL);
+        
+        socket.emit('getTemperatura');
+        socket.emit('getLuminosidad');
+        socket.emit('getAire');
+        socket.emit('getPersianas');
+
+        function changePersianas() {
+            socket.emit('changePersianas');
+        }
+
+        function changeAire() {
+            socket.emit('changeAire');
+        }
+
+        
+        socket.on('updateTemperatura', function(data) {
+            var estado_temperatura = document.getElementById('estado-temperatura');
+			estado_temperatura.innerHTML = data;
+        });
+
+        socket.on('updateLuminosidad', function(data) {
+            var estado_luminosidad = document.getElementById('estado-luminosidad');
+			estado_luminosidad.innerHTML = data;
+        });
+
+        ocket.on('updateAire', function(data) {
+            var estado_aire = document.getElementById('estado-aire');
+            estado_aire.innerHTML = data;
+        });
+
+        socket.on('updatePersianas', function(data) {
+            var estado_persianas = document.getElementById('estado-persianas');
+			estado_persianas.innerHTML = data;
+        });
+
+
+        socket.on('alerta-temperatura', function(data) {
+            var alerta_temperatura = document.getElementById('alerta-temperatura');
+			alerta_temperatura.innerHTML = data;
+        });
+        socket.on('alerta-luminosidad', function(data) {
+            var alerta_luminosidad = document.getElementById('alerta-luminosidad');
+			alerta_luminosidad.innerHTML = data;
+        });
+
+   
+
+    </script>
+</html>
