@@ -4,12 +4,14 @@
         <meta charset="UTF-8">
         <link rel="icon" href="data:,">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+
         <title>Cliente</title>
        
     </head>
 
     <body>
-        <div id="Informacion Sensores y Elementos Inteligentes ">
+        <div id="info-sensores">
             Temperatura:
             <span id="temperaturaActual"></span><br><br>
     
@@ -30,12 +32,12 @@
             <button onclick="change_aire();">ON/OFF Aire Acondicionado</button>
         </div>
 
-        <a class="pagina" target="" href="sensors.html">Cambiar Sensores</a>
-
+        <div class="enlace"><a class="pagina" target="" href="sensors.html">Cambiar Sensores</a>
+        </div>
    
 
-        <div id="Temperatura_notificacion"></div>
-        <div id="Luminosidad_notificacion"></div>
+        <div id="tmp_notificacion"></div>
+        <div id="lum_notificacion"></div>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -79,11 +81,11 @@
 
 
         socket.on('TemperaturaNotificacion', function(data) {
-            var alerta_temperatura = document.getElementById('TemperaturaNotificacion');
+            var alerta_temperatura = document.getElementById('tmp_notificacion');
 			alerta_temperatura.innerHTML = data;
         });
         socket.on('LuminosidadNotificacion', function(data) {
-            var alerta_luminosidad = document.getElementById('LuminosidadNotificacion');
+            var alerta_luminosidad = document.getElementById('lum_notificacion');
 			alerta_luminosidad.innerHTML = data;
         });
 

@@ -64,17 +64,20 @@ MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUni
 			client.on('insertTemperatura', function (data) {
 				console.log("temperatura Pasada :" + data.temperatura);
 				temperatura = data.temperatura;
-                collection.insert( data , {safe:true}, function(err, result) {});
-                io.sockets.emit("updateTemperatura", temperatura);
 
-					if(temperatura > TEMPERATURA_MAX)
+					if(temperatura > TEMPERATURA_MAX){
 						io.sockets.emit("TemperaturaNotificacion", "La temperatura insertada supera los valores maximos soportados");
+					}
 					
-					else if(temperatura < TEMPERATURA_MIN)
+					else if(temperatura < TEMPERATURA_MIN){
 						io.sockets.emit("TemperaturaNotificacion", "La temperatura insertada es inferior a los valores minimos soportados");
+					}
 					
-					else
+					else{
 						io.sockets.emit("TemperaturaNotificacion", ""); 
+						collection.insert( data , {safe:true}, function(err, result) {});
+                		io.sockets.emit("updateTemperatura", temperatura);
+					}
 					
 			});
 
@@ -82,16 +85,20 @@ MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUni
 				luminosidad = data.luminosidad;
 				console.log("Luminosidad Pasada :" + data.luminosidad);
 
-                collection.insert(data, {safe:true}, function(err, result) {});
-                io.sockets.emit("updateLuminosidad", luminosidad);
+				if(luminosidad > LUMINOSIDAD_MAX){
+					console.log("Demasiada Luminosidad");
 
-				if(luminosidad > LUMINOSIDAD_MAX)
 					io.sockets.emit("LuminosidadNotificacion", "La luminosidad insertada supera los valores maximos soportados");
-				else if(luminosidad < LUMINOSIDAD_MIN)
+				}
+				else if(luminosidad < LUMINOSIDAD_MIN){
+					console.log("Insuficiente Luminosidad");
 					io.sockets.emit("LuminosidadNotificacion", "La luminosidad insertada es inferior a los valores minimos soportados");
+				}
 				else{
 					io.sockets.emit("LuminosidadNotificacion", "");
-					
+
+                	collection.insert(data, {safe:true}, function(err, result) {});
+               		 io.sockets.emit("updateLuminosidad", luminosidad);
 				}
 			});
 
