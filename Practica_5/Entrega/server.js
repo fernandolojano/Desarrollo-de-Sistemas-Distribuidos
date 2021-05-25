@@ -138,4 +138,4 @@ MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUni
 	});
 });
 
-console.log("Sistema Domotico Iniciado");
+console.log("Init");
