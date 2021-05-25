@@ -61,9 +61,10 @@ MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUni
 	dbo.createCollection("cambioSensores", function(err, collection){
 		io.sockets.on('connection',
 		function(client){
-			client.on('insertTemperatura', function(data){
+			client.on('insertTemperatura', function (data) {
+				console.log("temperatura Pasada :" + data.temperatura);
 				temperatura = data.temperatura;
-                collection.insert(data, {safe:true}, function(err, result) {});
+                collection.insert( data , {safe:true}, function(err, result) {});
                 io.sockets.emit("updateTemperatura", temperatura);
 
 					if(temperatura > TEMPERATURA_MAX)
@@ -79,6 +80,8 @@ MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUni
 
 			client.on("insertLuminosidad", function(data){
 				luminosidad = data.luminosidad;
+				console.log("Luminosidad Pasada :" + data.luminosidad);
+
                 collection.insert(data, {safe:true}, function(err, result) {});
                 io.sockets.emit("updateLuminosidad", luminosidad);
 
