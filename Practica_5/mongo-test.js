@@ -40,12 +40,11 @@ var httpServer = http.createServer(
 	}
 );
 
+MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUnifiedTopology: true},function(err, db) {
+ httpServer.listen(8080);
+ var io = socketio(httpServer);
 
-MongoClient.connect("mongodb://localhost:27017/", function(err, db) {
-	httpServer.listen(8080);
-	var io = socketio.listen(httpServer);
-
-	var dbo = db.db("pruebaBaseDatos");
+ var dbo = db.db("pruebaBaseDatos");
 	dbo.createCollection("test", function(err, collection){
     	io.sockets.on('connection',
 		function(client) {

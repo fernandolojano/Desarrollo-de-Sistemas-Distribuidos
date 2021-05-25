@@ -2,9 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" href="data:,">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Cliente</title>
-        <link rel="stylesheet" href="estyle.css">
+       
     </head>
 
     <body>
@@ -25,26 +26,16 @@
         </div>
 
         <div id="botones">
-            <button onclick="changePersianas();">Abrir/Cerrar Persianas</button>
-            <button onclick="changeAire();">ON/OFF Aire Acondicionado</button>
+            <button onclick="change_persianas();">Abrir/Cerrar Persianas</button>
+            <button onclick="change_aire();">ON/OFF Aire Acondicionado</button>
         </div>
 
-        
-        <div id="Parametros">
-            <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendTemperatura();">
-                <label for="temperatura">Temperatura:</label>
-                <input type="text" name="temperatura" id="temperatura" placeholder="Escriba la temperatura">
-                <input type="submit" value="Enviar datos de la temperatura">
-            </form>
-            <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendLuminosidad();">
-                <label for="luminosidad">Luminosidad:</label>
-                <input type="text" name="luminosidad" id="luminosidad" placeholder="Escriba la luminosidad">
-                <input type="submit" value="Enviar datos de la luminosidad">
-            </form>
-        </div>
+        <a class="pagina" target="" href="sensors.html">Cambiar Sensores</a>
 
-        <div id="TemperaturaNotificacion"></div>
-        <div id="LuminosidadNotificacion"></div>
+   
+
+        <div id="Temperatura_notificacion"></div>
+        <div id="Luminosidad_notificacion"></div>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -57,46 +48,44 @@
         socket.emit('getAire');
         socket.emit('getPersianas');
 
-        function changePersianas() {
+        function change_persianas() {
             socket.emit('changePersianas');
         }
 
-        function changeAire() {
+        function change_aire() {
             socket.emit('changeAire');
         }
 
         
         socket.on('updateTemperatura', function(data) {
-            var estado_temperatura = document.getElementById('estado-temperatura');
+            var estado_temperatura = document.getElementById('temperaturaActual');
 			estado_temperatura.innerHTML = data;
         });
 
         socket.on('updateLuminosidad', function(data) {
-            var estado_luminosidad = document.getElementById('estado-luminosidad');
+            var estado_luminosidad = document.getElementById('luminosidadActual');
 			estado_luminosidad.innerHTML = data;
         });
 
-        ocket.on('updateAire', function(data) {
-            var estado_aire = document.getElementById('estado-aire');
+        socket.on('updateAire', function(data) {
+            var estado_aire = document.getElementById('estadoAire');
             estado_aire.innerHTML = data;
         });
 
         socket.on('updatePersianas', function(data) {
-            var estado_persianas = document.getElementById('estado-persianas');
+            var estado_persianas = document.getElementById('estadoPersianas');
 			estado_persianas.innerHTML = data;
         });
 
 
-        socket.on('alerta-temperatura', function(data) {
-            var alerta_temperatura = document.getElementById('alerta-temperatura');
+        socket.on('TemperaturaNotificacion', function(data) {
+            var alerta_temperatura = document.getElementById('TemperaturaNotificacion');
 			alerta_temperatura.innerHTML = data;
         });
-        socket.on('alerta-luminosidad', function(data) {
-            var alerta_luminosidad = document.getElementById('alerta-luminosidad');
+        socket.on('LuminosidadNotificacion', function(data) {
+            var alerta_luminosidad = document.getElementById('LuminosidadNotificacion');
 			alerta_luminosidad.innerHTML = data;
         });
-
-   
 
     </script>
 </html>

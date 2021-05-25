@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="data:,">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sensors</title>
+    </head>
+
+    <body>     
+        <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendTemperatura();">
+            <label for="temperatura">Temperatura:</label>
+            <input type="text" name="temperatura" id="temperatura" placeholder="Nivel de temperatura">
+            <input type="submit" value="Enviar temperatura">
+        </form>
+        <form class="formulario" action="javascript:void(0);" onsubmit="javascript:sendLuminosidad();">
+            <label for="luminosidad">Luminosidad:</label>
+            <input type="text" name="luminosidad" id="luminosidad" placeholder="Nivel de luminosidad">
+            <input type="submit" value="Enviar luminosidad">
+        </form>
+    </body>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var serviceURL = 'localhost:8080';
+        var socket = io.connect(serviceURL);
+
+
+        function sendTemperatura() {
+            var temp = document.getElementById("temperatura").value;
+            var d = new Date();
+            socket.emit('insertTemperatura', {temperatura:temp, time:d});
+        }
+
+        function sendLuminosidad(){
+            var lumin = document.getElementById("luminosidad").value;
+            var d = new Date();
+            socket.emit('insertLuminosidad', {luminosidad:lumin, time:d});
+        }
+    </script>
+</html>

@@ -6,16 +6,16 @@ var path = require("path");
 var mimeTypes = { "html": "text/html", "jpeg": "image/jpeg", "js": "text/javascript", "css": "text/css", "swf": "application/x-shockwave-flash" };
 
 var MongoClient = require('mongodb').MongoClient;
-var MongoServer = require('mongo').MongoServer;
+var MongoServer = require('mongodb').MongoServer;
 
-var TEMPERATURA_MAX = 36;
+var TEMPERATURA_MAX = 50;
 var TEMPERATURA_MIN = 10;
 var LUMINOSIDAD_MAX = 100;
 var LUMINOSIDAD_MIN = 0;
-var temperatura = 22;
+var temperatura = 20;
 var luminosidad = 50;
-var persianas = "CLOSED";
-var aireAcondicionado = "OFF";
+var persianas = 'CLOSED';
+var aireAcondicionado = 'OFF';
 
 
 
@@ -23,14 +23,14 @@ var aireAcondicionado = "OFF";
 var httpServer = http.createServer(
 	function(request, response){
 		var uri = url.parse(request.url).pathname;
-		if(uri=="/") uri ="/client.html";
-		var frame = path.join(process.cwd(), uri);
+		if (uri=="/") uri = "/client.html";
+		var fname = path.join(process.cwd(), uri);
 		fs.exists(fname, function(exists){
 			if(exists){
 				fs.readFile(fname, function(err, data){
 					if(!err){
 						var extension = path.extname(fname).split(".")[1];
-						var mimeType = mimeTypes[exstension];
+						var mimeType = mimeTypes[extension];
 						response.writeHead(200, mimeType);
 						response.write(data);
 						response.end();
@@ -52,48 +52,53 @@ var httpServer = http.createServer(
 	}
 );
 
-MongoClient.connect("mongodb://localhost:27017/", function(err, db){
-	httpServer.listen(8080);
 
-	var io = socketio.listen(httpServer);
+MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true, useUnifiedTopology: true},function(err, db) {
+	httpServer.listen(8080);
+	var io = socketio(httpServer);
 	var dbo = db.db("BDSistDomotico");
 
-	dbo.createCollection("Cambiosensores", function(err, collection){
+	dbo.createCollection("cambioSensores", function(err, collection){
 		io.sockets.on('connection',
 		function(client){
-			client.on('setTemperatura', function(data){
+			client.on('insertTemperatura', function(data){
 				temperatura = data.temperatura;
-				collection.insert(data, {safe:true}, function(err,result){});
-					io.sockets.emit("updateTemperatura", temperatura);
+                collection.insert(data, {safe:true}, function(err, result) {});
+                io.sockets.emit("updateTemperatura", temperatura);
 
 					if(temperatura > TEMPERATURA_MAX)
 						io.sockets.emit("TemperaturaNotificacion", "La temperatura insertada supera los valores maximos soportados");
+					
 					else if(temperatura < TEMPERATURA_MIN)
 						io.sockets.emit("TemperaturaNotificacion", "La temperatura insertada es inferior a los valores minimos soportados");
+					
 					else
-						io.sockets.emit("TemperaturaNotifiacion", ""); 
+						io.sockets.emit("TemperaturaNotificacion", ""); 
+					
 			});
 
-			client.on("setLuminosidad", function(data){
+			client.on("insertLuminosidad", function(data){
 				luminosidad = data.luminosidad;
-				collection.insert(data, {safe:true}, function(err,result){});
-				io.sockets.emit("updateLuminosidad", luminosidad);
+                collection.insert(data, {safe:true}, function(err, result) {});
+                io.sockets.emit("updateLuminosidad", luminosidad);
 
 				if(luminosidad > LUMINOSIDAD_MAX)
 					io.sockets.emit("LuminosidadNotificacion", "La luminosidad insertada supera los valores maximos soportados");
 				else if(luminosidad < LUMINOSIDAD_MIN)
-					io.socket.emit("LuminosidadNotificacion", "La luminosidad insertada es inferior a los valores minimos soportados");
-				else
+					io.sockets.emit("LuminosidadNotificacion", "La luminosidad insertada es inferior a los valores minimos soportados");
+				else{
 					io.sockets.emit("LuminosidadNotificacion", "");
+					
+				}
 			});
 
 			client.on('changeAire', function(){
-				if(aire =='OFF')
-					aire = 'ON';
-				else if(aire == 'ON')
-					aire = 'OFF';
+				if(aireAcondicionado =='OFF')
+					aireAcondicionado = 'ON';
+				else if(aireAcondicionado == 'ON')
+					aireAcondicionado = 'OFF';
 
-				io.sockets.emit('updateAire', aire);
+				io.sockets.emit('updateAire', aireAcondicionado);
 			});
 
 			client.on('changePersianas', function(){
@@ -113,7 +118,7 @@ MongoClient.connect("mongodb://localhost:27017/", function(err, db){
 			});
 
 			client.on('getAire', function(){
-				io.sockets.emit('updateAire', aire);
+				io.sockets.emit('updateAire', aireAcondicionado);
 			});
 
 			client.on('getPersianas', function(){
