@@ -11,6 +11,25 @@
     </head>
 
     <body>
+
+        <div id="meteo-field">
+            Ciudad:
+            <span id="ciudad"></span><br><br>
+            Temperatura:
+            <span id="tempCiudad"></span>ºC<br><br>
+            Sensacion termica:
+            <span id="sensacionTermica"></span>ºC<br><br>
+            Temperaturas Máximas:
+            <span id="temperaturaMaxima"></span>ºC<br><br>
+            Temperaturas Mínimas:
+            <span id="temperaturaMinima"></span>ºC<br><br>
+            Humedad:
+            <span id="humedadCiudad"></span>%<br><br>
+            Presion atmosférica:
+            <span id="presion"></span> Pa<br><br>
+        </div>
+
+
         <div id="info-sensores">
             Temperatura:
             <span id="temperaturaActual"></span><br><br>
@@ -34,7 +53,6 @@
 
         <div class="enlace"><a class="pagina" target="" href="sensors.html">Cambiar Sensores</a>
         </div>
-   
 
         <div id="tmp_notificacion"></div>
         <div id="lum_notificacion"></div>
@@ -49,6 +67,13 @@
         socket.emit('getLuminosidad');
         socket.emit('getAire');
         socket.emit('getPersianas');
+        socket.emit('getCiudad');
+        socket.emit('getTemperaturaCiudad');
+        socket.emit('getSensacionTermica');
+        socket.emit('getHumedadCiudad');
+        socket.emit('getTempMax');
+        socket.emit('getTempMin');
+        socket.emit('getPresion');
 
         function change_persianas() {
             socket.emit('changePersianas');
@@ -87,6 +112,41 @@
         socket.on('LuminosidadNotificacion', function(data) {
             var alerta_luminosidad = document.getElementById('lum_notificacion');
 			alerta_luminosidad.innerHTML = data;
+        });
+
+        socket.on('ciudadSocket', function(data){
+            var nombre_ciudad = document.getElementById('ciudad');
+            nombre_ciudad.innerHTML = data;
+        });
+
+        socket.on('tempCiudadSocket', function(data){
+            var temperatura_ciudad = document.getElementById('tempCiudad');
+            temperatura_ciudad.innerHTML = data;
+        });
+
+        socket.on('humedadCiudadSocket', function(data){
+            var humedad_ciudad = document.getElementById('humedadCiudad');
+            humedad_ciudad.innerHTML = data;
+        });
+
+        socket.on('sensTmpSocket', function(data){
+            var sensacion_termica = document.getElementById('sensacionTermica');
+            sensacion_termica.innerHTML = data;
+        });
+
+        socket.on('tempMaxSocket', function(data){
+            var temperatura_maxima = document.getElementById('temperaturaMaxima');
+            temperatura_maxima.innerHTML = data;
+        });
+
+        socket.on('tempMinSocket', function(data){
+            var temperatura_minima = document.getElementById('temperaturaMinima');
+            temperatura_minima.innerHTML = data;
+        });
+
+        socket.on('presionSocket', function(data){
+            var presion_ciudad = document.getElementById('presion');
+            presion_ciudad.innerHTML = data;
         });
 
     </script>
